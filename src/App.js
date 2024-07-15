@@ -38,21 +38,52 @@ function App() {
     });
   };
 
+  const handleDownload = (content, filename) => {
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const renderResults = (result, index) => {
+    const explainText =
+      result.explain && Array.isArray(result.explain)
+        ? result.explain.map((item) => item["QUERY PLAN"]).join("\n")
+        : "Error in EXPLAIN ANALYZE";
+
     return (
       <div className="result-container" key={index}>
         <h3>Database {index + 1}</h3>
+        <p>{result.db_info}</p>
         <div className="result-box">
           <h4>EXPLAIN ANALYZE</h4>
           <div className="explain-box">
             {result.explain && Array.isArray(result.explain) ? (
-              result.explain.map((item, i) => (
-                <div key={i} className="mb-3">
-                  {renderQueryPlan(item["QUERY PLAN"])}
-                </div>
-              ))
+              <>
+                {result.explain.map((item, i) => (
+                  <div key={i} className="mb-3">
+                    {renderQueryPlan(item["QUERY PLAN"])}
+                  </div>
+                ))}
+                <button
+                  className="btn btn-secondary mt-3"
+                  onClick={() =>
+                    handleDownload(
+                      explainText,
+                      `explain_result_db${index + 1}.txt`
+                    )
+                  }
+                >
+                  Download EXPLAIN Result
+                </button>
+              </>
             ) : (
-              <div className="alert alert-danger">{result.explain.error}</div>
+              <div className="alert alert-danger">
+                {result.explain ? result.explain.error : "Unknown error"}
+              </div>
             )}
           </div>
           <h4>Query Result (First 5 rows)</h4>
@@ -60,7 +91,9 @@ function App() {
             {result.query && Array.isArray(result.query) ? (
               <pre>{JSON.stringify(result.query, null, 2)}</pre>
             ) : (
-              <div className="alert alert-danger">{result.query.error}</div>
+              <div className="alert alert-danger">
+                {result.query ? result.query.error : "Unknown error"}
+              </div>
             )}
           </div>
         </div>

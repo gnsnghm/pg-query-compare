@@ -2,11 +2,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor, Json
-import json
 import os
 
 app = Flask(__name__)
-CORS(app)  # ここで CORS を有効にします
+CORS(app)
 
 # 記録用DBの設定
 record_db_config = {
@@ -61,7 +60,11 @@ def execute():
     for db_config in db_configs:
         explain_result = execute_query(db_config, query, explain=True)
         query_result = execute_query(db_config, query, explain=False)
-        results.append({'explain': explain_result, 'query': query_result})
+        results.append({
+            'db_info': f"{db_config['host']}:{db_config['port']}/{db_config['dbname']}",
+            'explain': explain_result,
+            'query': query_result
+        })
 
     record_results(query, results)
 
@@ -75,7 +78,8 @@ def record_results(query, results):
         for result in results:
             cursor.execute(
                 "INSERT INTO query_results (query, result) VALUES (%s, %s)",
-                (query, Json(result))  # RealDictRow オブジェクトを JSON に変換
+                # RealDictRow オブジェクトを JSON に変換
+                (query, Json(result))
             )
         conn.commit()
         cursor.close()
