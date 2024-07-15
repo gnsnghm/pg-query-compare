@@ -70,7 +70,7 @@ body {
 .explain-box,
 .query-box {
   font-family: "Source Code Pro";
-  font-size: 14px;
+  font-size: 12px;
   border: 1px solid #ced4da; /* Gray border */
   border-radius: 5px; /* Rounded corners */
   padding: 10px; /* Padding inside the box */
