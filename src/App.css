@@ -45,43 +45,37 @@ body {
   }
 }
 
+/* 全体のコンテナの幅を広げる */
+.container {
+  max-width: 1600px; /* 必要に応じてこの値を調整してください */
+}
+
 .results-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  /* スペースを追加 */
+  gap: 20px; /* スペースを追加 */
 }
 
 .result-container {
   flex: 1;
-  min-width: 300px;
-  /* 最小幅を指定 */
-  max-width: 600px;
-  /* 最大幅を指定 */
-  box-sizing: border-box;
-  /* ボックスサイズを指定 */
+  min-width: 300px; /* 最小幅を指定 */
+  max-width: 800px; /* 最大幅を指定 */
+  box-sizing: border-box; /* ボックスサイズを指定 */
 }
 
 .result-box {
-  font-family: "Source Code Pro";
-  margin-bottom: 20px;
-  /* Margin below the box */
+  padding: 10px; /* Padding inside the box */
 }
 
 .explain-box,
 .query-box {
-  border: 1px solid #ced4da;
-  /* Gray border */
-  border-radius: 5px;
-  /* Rounded corners */
-  padding: 15px;
-  /* Padding inside the box */
-  background-color: #f8f9fa;
-  /* Light gray background */
-  margin-bottom: 20px;
-  /* Margin below the box */
-  width: 100%;
-  /* 幅を100%に設定 */
-  box-sizing: border-box;
-  /* ボックスサイズを指定 */
+  font-family: "Source Code Pro";
+  font-size: 14px;
+  border: 1px solid #ced4da; /* Gray border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding inside the box */
+  background-color: #f8f9fa; /* Light gray background */
+  margin-bottom: 20px; /* Margin below the box */
+  width: 100%; /* 幅を100%に設定 */
+  box-sizing: border-box; /* ボックスサイズを指定 */
 }

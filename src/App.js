@@ -29,9 +29,9 @@ function App() {
     if (!plan) return null;
     const lines = plan.split("\n");
     return lines.map((line, index) => {
-      const indentLevel = line.match(/^ */)[0].length / 2; // 2 spaces per indent level
+      const indentLevel = line.match(/^ */)[0].length / 4;
       return (
-        <div key={index} style={{ paddingLeft: `${indentLevel * 20}px` }}>
+        <div key={index} style={{ paddingLeft: `${indentLevel * 10}px` }}>
           {line}
         </div>
       );
