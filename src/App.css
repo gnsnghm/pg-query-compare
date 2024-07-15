@@ -37,20 +37,6 @@
   }
 }
 
-.query-form {
-  background-color: #e9ecef;
-  /* Light gray background for the form */
-  padding: 30px;
-  border-radius: 5px;
-  border: 1px solid #ced4da;
-  /* Gray border */
-}
-
-.query-input {
-  height: 200px;
-  /* Adjust the height of the CodeMirror editor */
-}
-
 .results-container {
   display: flex;
   flex-wrap: wrap;
@@ -62,18 +48,31 @@
   flex: 1;
   min-width: 300px;
   /* 最小幅を指定 */
-  max-width: 1500px;
+  max-width: 600px;
   /* 最大幅を指定 */
   box-sizing: border-box;
   /* ボックスサイズを指定 */
 }
 
 .result-box {
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-  padding: 15px;
-  background-color: #f8f9fa;
   margin-bottom: 20px;
+  /* Margin below the box */
+}
+
+.explain-box,
+.query-box {
+  border: 1px solid #ced4da;
+  /* Gray border */
+  border-radius: 5px;
+  /* Rounded corners */
+  padding: 15px;
+  /* Padding inside the box */
+  background-color: #f8f9fa;
+  /* Light gray background */
+  margin-bottom: 20px;
+  /* Margin below the box */
   width: 100%;
+  /* 幅を100%に設定 */
   box-sizing: border-box;
+  /* ボックスサイズを指定 */
 }

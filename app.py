@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor, Json
+import json
+import os
 
 app = Flask(__name__)
 CORS(app)  # ここで CORS を有効にします
@@ -29,16 +31,19 @@ db_configs = [
         'user': 'postgres',
         'password': 'postgres00',
         'host': 'localhost',
-        'port': 5433
+        'port': 5434
     }
 ]
 
 
-def execute_query(db_config, query):
+def execute_query(db_config, query, explain=False):
     try:
         conn = psycopg2.connect(**db_config)
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(f"EXPLAIN ANALYZE {query}")
+        if explain:
+            cursor.execute(f"EXPLAIN ANALYZE {query}")
+        else:
+            cursor.execute(f"{query} LIMIT 5")
         result = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -54,8 +59,9 @@ def execute():
     results = []
 
     for db_config in db_configs:
-        result = execute_query(db_config, query)
-        results.append(result)
+        explain_result = execute_query(db_config, query, explain=True)
+        query_result = execute_query(db_config, query, explain=False)
+        results.append({'explain': explain_result, 'query': query_result})
 
     record_results(query, results)
 
@@ -69,7 +75,7 @@ def record_results(query, results):
         for result in results:
             cursor.execute(
                 "INSERT INTO query_results (query, result) VALUES (%s, %s)",
-                (query, result)
+                (query, Json(result))  # RealDictRow オブジェクトを JSON に変換
             )
         conn.commit()
         cursor.close()
@@ -79,4 +85,5 @@ def record_results(query, results):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)

@@ -28,16 +28,6 @@ function App() {
   const renderQueryPlan = (plan) => {
     const lines = plan.split("\n");
     return lines.map((line, index) => {
-      if (line.includes("Planning Time") || line.includes("Execution Time")) {
-        return (
-          <div key={index} style={{ paddingLeft: "0px" }}>
-            {line}
-          </div>
-        );
-      }
-      if (line.trim() === "") {
-        return null; // 空行を無視
-      }
       const indentLevel = line.match(/^ */)[0].length / 2; // 2 spaces per indent level
       return (
         <div key={index} style={{ paddingLeft: `${indentLevel * 20}px` }}>
@@ -61,11 +51,19 @@ function App() {
       <div className="result-container" key={index}>
         <h3>Database {index + 1}</h3>
         <div className="result-box">
-          {result.map((item, i) => (
-            <div key={i} className="mb-3">
-              {renderQueryPlan(item["QUERY PLAN"])}
-            </div>
-          ))}
+          <h4>EXPLAIN ANALYZE</h4>
+          <div className="explain-box">
+            {result.explain &&
+              result.explain.map((item, i) => (
+                <div key={i} className="mb-3">
+                  {renderQueryPlan(item["QUERY PLAN"])}
+                </div>
+              ))}
+          </div>
+          <h4>Query Result (First 5 rows)</h4>
+          <div className="query-box">
+            <pre>{result.query && JSON.stringify(result.query, null, 2)}</pre>
+          </div>
         </div>
       </div>
     );
