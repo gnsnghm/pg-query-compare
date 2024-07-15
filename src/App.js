@@ -26,6 +26,7 @@ function App() {
   };
 
   const renderQueryPlan = (plan) => {
+    if (!plan) return null;
     const lines = plan.split("\n");
     return lines.map((line, index) => {
       const indentLevel = line.match(/^ */)[0].length / 2; // 2 spaces per indent level
@@ -38,31 +39,29 @@ function App() {
   };
 
   const renderResults = (result, index) => {
-    if (result.error) {
-      return (
-        <div className="result-container" key={index}>
-          <h3>Database {index + 1}</h3>
-          <div className="alert alert-danger">{result.error}</div>
-        </div>
-      );
-    }
-
     return (
       <div className="result-container" key={index}>
         <h3>Database {index + 1}</h3>
         <div className="result-box">
           <h4>EXPLAIN ANALYZE</h4>
           <div className="explain-box">
-            {result.explain &&
+            {result.explain && Array.isArray(result.explain) ? (
               result.explain.map((item, i) => (
                 <div key={i} className="mb-3">
                   {renderQueryPlan(item["QUERY PLAN"])}
                 </div>
-              ))}
+              ))
+            ) : (
+              <div className="alert alert-danger">{result.explain.error}</div>
+            )}
           </div>
           <h4>Query Result (First 5 rows)</h4>
           <div className="query-box">
-            <pre>{result.query && JSON.stringify(result.query, null, 2)}</pre>
+            {result.query && Array.isArray(result.query) ? (
+              <pre>{JSON.stringify(result.query, null, 2)}</pre>
+            ) : (
+              <div className="alert alert-danger">{result.query.error}</div>
+            )}
           </div>
         </div>
       </div>
