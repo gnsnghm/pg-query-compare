@@ -36,3 +36,44 @@
     transform: rotate(360deg);
   }
 }
+
+.query-form {
+  background-color: #e9ecef;
+  /* Light gray background for the form */
+  padding: 30px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  /* Gray border */
+}
+
+.query-input {
+  height: 200px;
+  /* Adjust the height of the CodeMirror editor */
+}
+
+.results-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  /* スペースを追加 */
+}
+
+.result-container {
+  flex: 1;
+  min-width: 300px;
+  /* 最小幅を指定 */
+  max-width: 1500px;
+  /* 最大幅を指定 */
+  box-sizing: border-box;
+  /* ボックスサイズを指定 */
+}
+
+.result-box {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
