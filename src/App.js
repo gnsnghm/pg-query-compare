@@ -7,9 +7,14 @@ function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
+  const [useBuffers, setUseBuffers] = useState(false); // BUFFERS オプションの追加
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
+  };
+
+  const handleBuffersChange = (e) => {
+    setUseBuffers(e.target.value === "buffers");
   };
 
   const handleSubmit = async (e) => {
@@ -17,6 +22,7 @@ function App() {
     try {
       const response = await axios.post("http://localhost:5000/execute", {
         query,
+        useBuffers,
       });
       setResults(response.data);
       setError(null);
@@ -114,6 +120,31 @@ function App() {
             value={query}
             onChange={handleQueryChange}
           ></textarea>
+        </div>
+        <div className="form-group mt-3">
+          <h4>Execute Options</h4>
+          <div style={{ display: "inline", marginLeft: "10px" }}>
+            <input
+              type="radio"
+              id="no_buffers"
+              name="buffers"
+              value="no_buffers"
+              checked={!useBuffers}
+              onChange={handleBuffersChange}
+            />
+            <label htmlFor="no_buffers" style={{ marginRight: "20px" }}>
+              Without BUFFERS
+            </label>
+            <input
+              type="radio"
+              id="buffers"
+              name="buffers"
+              value="buffers"
+              checked={useBuffers}
+              onChange={handleBuffersChange}
+            />
+            <label htmlFor="buffers">With BUFFERS</label>
+          </div>
         </div>
         <button type="submit" className="btn btn-primary mt-3">
           Execute

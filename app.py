@@ -30,17 +30,21 @@ db_configs = [
         'user': 'postgres',
         'password': 'postgres00',
         'host': 'localhost',
-        'port': 5434
+        'port': 5433
     }
 ]
 
 
-def execute_query(db_config, query, explain=False):
+def execute_query(db_config, query, explain=False, use_buffers=False):
     try:
         conn = psycopg2.connect(**db_config)
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         if explain:
-            cursor.execute(f"EXPLAIN ANALYZE {query}")
+            explain_query = "EXPLAIN (ANALYZE"
+            if use_buffers:
+                explain_query += ", BUFFERS"
+            explain_query += ")"
+            cursor.execute(f"{explain_query} {query}")
         else:
             cursor.execute(f"{query} LIMIT 5")
         result = cursor.fetchall()
@@ -55,10 +59,12 @@ def execute_query(db_config, query, explain=False):
 def execute():
     data = request.json
     query = data.get('query')
+    use_buffers = data.get('useBuffers', False)
     results = []
 
     for db_config in db_configs:
-        explain_result = execute_query(db_config, query, explain=True)
+        explain_result = execute_query(
+            db_config, query, explain=True, use_buffers=use_buffers)
         query_result = execute_query(db_config, query, explain=False)
         results.append({
             'db_info': f"{db_config['host']}:{db_config['port']}/{db_config['dbname']}",
