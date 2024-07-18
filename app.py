@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor, Json
+import re
 import os
 
 app = Flask(__name__)
@@ -35,24 +36,48 @@ db_configs = [
 ]
 
 
+def remove_comments(query):
+    # シングルラインコメントを削除
+    query = re.sub(r'--.*?(\r\n|\r|\n)', ' ', query)
+    # マルチラインコメントを削除
+    query = re.sub(r'/\*.*?\*/', ' ', query, flags=re.DOTALL)
+    return query
+
+
+def is_select_query(query):
+    query = remove_comments(query).strip().upper()
+    return query.startswith("SELECT") or query.startswith("WITH")
+
+
 def execute_query(db_config, query, explain=False, use_buffers=False):
     try:
         conn = psycopg2.connect(**db_config)
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        result = None
         if explain:
             explain_query = "EXPLAIN (ANALYZE"
             if use_buffers:
                 explain_query += ", BUFFERS"
             explain_query += ")"
             cursor.execute(f"{explain_query} {query}")
+            result = cursor.fetchall()
         else:
-            cursor.execute(f"{query} LIMIT 5")
-        result = cursor.fetchall()
+            cursor.execute("BEGIN")
+            try:
+                cursor.execute(query)
+                if is_select_query(query):
+                    result = cursor.fetchall()
+                else:
+                    result = [{"error": "Non-SELECT queries are not allowed."}]
+            except Exception as e:
+                result = [{"error": str(e)}]
+            finally:
+                cursor.execute("ROLLBACK")
         cursor.close()
         conn.close()
         return result
     except Exception as e:
-        return {'error': str(e)}
+        return [{'error': str(e)}]
 
 
 @app.route('/execute', methods=['POST'])
