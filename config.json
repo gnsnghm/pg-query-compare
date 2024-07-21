@@ -1,0 +1,25 @@
+{
+  "record_db_config": {
+    "dbname": "compare_log",
+    "user": "postgres",
+    "password": "postgres00",
+    "host": "localhost",
+    "port": 5433
+  },
+  "db_configs": [
+    {
+      "dbname": "compare_1",
+      "user": "postgres",
+      "password": "postgres00",
+      "host": "localhost",
+      "port": 5433
+    },
+    {
+      "dbname": "compare_2",
+      "user": "postgres",
+      "password": "postgres00",
+      "host": "localhost",
+      "port": 5433
+    }
+  ]
+}

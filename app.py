@@ -4,37 +4,17 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 import re
 import os
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-# 記録用DBの設定
-record_db_config = {
-    'dbname': 'compare_log',
-    'user': 'postgres',
-    'password': 'postgres00',
-    'host': 'localhost',
-    'port': 5433
-}
+# 設定ファイルの読み込み
+with open('config.json') as config_file:
+    config = json.load(config_file)
 
-# PostgreSQLの設定（複数のインスタンスを管理するための例）
-db_configs = [
-    {
-        'dbname': 'compare_1',
-        'user': 'postgres',
-        'password': 'postgres00',
-        'host': 'localhost',
-        'port': 5433
-    },
-    {
-        'dbname': 'compare_2',
-        'user': 'postgres',
-        'password': 'postgres00',
-        'host': 'localhost',
-        'port': 5433
-    }
-]
-
+record_db_config = config['record_db_config']
+db_configs = config['db_configs']
 
 def remove_comments(query):
     # シングルラインコメントを削除
@@ -43,11 +23,9 @@ def remove_comments(query):
     query = re.sub(r'/\*.*?\*/', ' ', query, flags=re.DOTALL)
     return query
 
-
 def is_select_query(query):
     query = remove_comments(query).strip().upper()
     return query.startswith("SELECT") or query.startswith("WITH")
-
 
 def execute_query(db_config, query, explain=False, use_buffers=False):
     try:
@@ -85,11 +63,11 @@ def execute():
     data = request.json
     query = data.get('query')
     use_buffers = data.get('useBuffers', False)
+    log_enabled = data.get('logEnabled', True)
     results = []
 
     for db_config in db_configs:
-        explain_result = execute_query(
-            db_config, query, explain=True, use_buffers=use_buffers)
+        explain_result = execute_query(db_config, query, explain=True, use_buffers=use_buffers)
         query_result = execute_query(db_config, query, explain=False)
         results.append({
             'db_info': f"{db_config['host']}:{db_config['port']}/{db_config['dbname']}",
@@ -97,7 +75,8 @@ def execute():
             'query': query_result
         })
 
-    record_results(query, results)
+    if log_enabled:
+        record_results(query, results)
 
     return jsonify(results)
 

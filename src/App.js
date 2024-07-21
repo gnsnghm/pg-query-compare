@@ -8,6 +8,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [useBuffers, setUseBuffers] = useState(false); // BUFFERS オプションの追加
+  const [logEnabled, setLogEnabled] = useState(true); // ログ書き込みの有効化
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
@@ -17,12 +18,17 @@ function App() {
     setUseBuffers(e.target.value === "buffers");
   };
 
+  const handleLogChange = (e) => {
+    setLogEnabled(e.target.checked);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/execute", {
         query,
         useBuffers,
+        logEnabled,
       });
       setResults(response.data);
       setError(null);
@@ -122,9 +128,10 @@ function App() {
           ></textarea>
         </div>
         <div className="form-group mt-3">
-          <h4>Execute Options</h4>
-          <div style={{ display: "inline", marginLeft: "10px" }}>
+          <label>EXPLAIN ANALYZE Options:</label>
+          <div className="form-check form-check-inline">
             <input
+              className="form-check-input"
               type="radio"
               id="no_buffers"
               name="buffers"
@@ -132,10 +139,13 @@ function App() {
               checked={!useBuffers}
               onChange={handleBuffersChange}
             />
-            <label htmlFor="no_buffers" style={{ marginRight: "20px" }}>
+            <label className="form-check-label" htmlFor="no_buffers">
               Without BUFFERS
             </label>
+          </div>
+          <div className="form-check form-check-inline">
             <input
+              className="form-check-input"
               type="radio"
               id="buffers"
               name="buffers"
@@ -143,7 +153,23 @@ function App() {
               checked={useBuffers}
               onChange={handleBuffersChange}
             />
-            <label htmlFor="buffers">With BUFFERS</label>
+            <label className="form-check-label" htmlFor="buffers">
+              With BUFFERS
+            </label>
+          </div>
+        </div>
+        <div className="form-group mt-3">
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="log_enabled"
+              checked={logEnabled}
+              onChange={handleLogChange}
+            />
+            <label className="form-check-label" htmlFor="log_enabled">
+              Enable Logging
+            </label>
           </div>
         </div>
         <button type="submit" className="btn btn-primary mt-3">
