@@ -1,5 +1,11 @@
 # pg-query-compare
 
+## Require
+
+PostgtgreSQL for record the execute log.
+
+Notice:Turn off log record.
+
 ## How to install
 
 ### Fontend
