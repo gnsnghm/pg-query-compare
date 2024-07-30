@@ -8,7 +8,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [useBuffers, setUseBuffers] = useState(false); // BUFFERS オプションの追加
-  const [logEnabled, setLogEnabled] = useState(true); // ログ書き込みの有効化
+  const [logEnabled, setLogEnabled] = useState(false); // ログ書き込みの有効化
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
