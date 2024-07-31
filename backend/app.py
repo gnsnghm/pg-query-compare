@@ -9,11 +9,20 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+# 環境変数から記録用DBの設定を読み込む
+record_db_config = {
+    'dbname': os.getenv('RECORD_DB_NAME', 'compare_log'),
+    'user': os.getenv('RECORD_DB_USER', 'postgres'),
+    'password': os.getenv('RECORD_DB_PASSWORD', 'postgres00'),
+    'host': os.getenv('RECORD_DB_HOST', 'db'),
+    'port': os.getenv('RECORD_DB_PORT', 5432)
+}
+
 # 設定ファイルの読み込み
 with open('config.json') as config_file:
     config = json.load(config_file)
 
-record_db_config = config['record_db_config']
+# record_db_config = config['record_db_config']
 db_configs = config['db_configs']
 
 def remove_comments(query):

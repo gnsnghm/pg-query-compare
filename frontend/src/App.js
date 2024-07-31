@@ -3,6 +3,8 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -25,7 +27,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/execute", {
+      const response = await axios.post(`${backendUrl}/execute`, {
         query,
         useBuffers,
         logEnabled,
