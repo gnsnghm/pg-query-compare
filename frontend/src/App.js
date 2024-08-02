@@ -3,7 +3,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-const backendUrl = process.env.REACT_APP_BACKEND_URL;
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 function App() {
   const [query, setQuery] = useState("");
