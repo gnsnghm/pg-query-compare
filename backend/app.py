@@ -22,7 +22,6 @@ record_db_config = {
 with open('config.json') as config_file:
     config = json.load(config_file)
 
-# record_db_config = config['record_db_config']
 db_configs = config['db_configs']
 
 def remove_comments(query):
@@ -51,8 +50,8 @@ def execute_query(db_config, query, explain=False, use_buffers=False):
         else:
             cursor.execute("BEGIN")
             try:
-                cursor.execute(query)
                 if is_select_query(query):
+                    cursor.execute(f"{query} LIMIT 5")
                     result = cursor.fetchall()
                 else:
                     result = [{"error": "Non-SELECT queries are not allowed."}]
@@ -65,7 +64,6 @@ def execute_query(db_config, query, explain=False, use_buffers=False):
         return result
     except Exception as e:
         return [{'error': str(e)}]
-
 
 @app.route('/execute', methods=['POST'])
 def execute():
@@ -89,7 +87,6 @@ def execute():
 
     return jsonify(results)
 
-
 def record_results(query, results):
     try:
         conn = psycopg2.connect(**record_db_config)
@@ -105,7 +102,6 @@ def record_results(query, results):
         conn.close()
     except Exception as e:
         print(f"Error recording results: {e}")
-
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
